@@ -1,0 +1,78 @@
+# Configuration for Context‑Aware Multilingual Phrasebook Generator
+# -----------------------------------------------------------------
+# This file contains static phrase templates, language mappings, and
+# auxiliary settings used by the FastAPI service.  It is loaded at
+# application start‑up with `yaml.safe_load` and validated against the
+# Pydantic models defined in `src/config.py`.
+
+phrase_templates:
+  # Each entry defines a reusable phrase with placeholders that will be
+  # filled by the context‑aware generation pipeline.
+  - id: greeting_formal
+    template: "Good {time_of_day}, {user_name}. How may I assist you today?"
+    description: Formal greeting used in professional settings.
+  - id: greeting_casual
+    template: "Hey {user_name}! What's up?"
+    description: Casual greeting for informal conversations.
+  - id: ask_location
+    template: "Could you tell me where the nearest {poi_type} is?"
+    description: Request for a point‑of‑interest location.
+  - id: confirm_booking
+    template: "Your reservation for {service} on {date} at {time} has been confirmed."
+    description: Confirmation message for bookings.
+  - id: thank_you
+    template: "Thank you, {user_name}, for using our service."
+    description: Generic thank‑you note.
+
+languages:
+  # Mapping of ISO‑639‑1 language codes to human‑readable names and
+  # optional tokenizer/embedding specifications.
+  en:
+    name: English
+    tokenizer: "bert-base-uncased"
+    embedding_model: "jinaai/jina-embeddings-v2-base-en"
+  es:
+    name: Spanish
+    tokenizer: "dccuchile/bert-base-spanish-wwm-cased"
+    embedding_model: "jinaai/jina-embeddings-v2-base-es"
+  fr:
+    name: French
+    tokenizer: "camembert-base"
+    embedding_model: "jinaai/jina-embeddings-v2-base-fr"
+  de:
+    name: German
+    tokenizer: "bert-base-german-cased"
+    embedding_model: "jinaai/jina-embeddings-v2-base-de"
+  zh:
+    name: Chinese
+    tokenizer: "bert-base-chinese"
+    embedding_model: "jinaai/jina-embeddings-v2-base-zh"
+  ja:
+    name: Japanese
+    tokenizer: "cl-tohoku/bert-base-japanese"
+    embedding_model: "jinaai/jina-embeddings-v2-base-ja"
+
+default_language: en
+
+embeddings:
+  # Global settings for the JinaAI embedding service.
+  provider: "jinaai"
+  api_key_env: "JINA_API_KEY"   # Environment variable that stores the secret key.
+  cache_dir: "./cache/embeddings"
+  timeout_seconds: 30
+
+database:
+  # SQLite configuration used by the Phrasebook service.
+  driver: "sqlite"
+  url: "sqlite:///./data/phrasebook.db"
+  pool_size: 5
+  timeout: 15
+
+api:
+  # FastAPI specific configuration.
+  host: "0.0.0.0"
+  port: 8000
+  reload: false   # Set to true only in development environments.
+  log_level: "info"
+
+# End of config.yaml
